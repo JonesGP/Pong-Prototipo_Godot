@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/bola saiu.mp3-8387de0cf8540c1ba7a2c21312531cd9.mp3str"
+
+[deps]
+
+source_file="res://songs/bola saiu.mp3"
+dest_files=[ "res://.import/bola saiu.mp3-8387de0cf8540c1ba7a2c21312531cd9.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

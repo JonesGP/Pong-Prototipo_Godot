@@ -1,0 +1,213 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://sprites/campo.png" type="Texture" id=1]
+[ext_resource path="res://sprites/barrier1.png" type="Texture" id=2]
+[ext_resource path="res://sprites/ball.png" type="Texture" id=3]
+[ext_resource path="res://sprites/player2.png" type="Texture" id=4]
+[ext_resource path="res://sprites/player_1.png" type="Texture" id=5]
+[ext_resource path="res://fonts/THEBOLDFONT 2022.otf" type="DynamicFontData" id=6]
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends Node
+
+#Variaveis da bola
+var dir_x = 1
+var dir_y = 1
+var speed = 250
+var somstop = 0
+
+
+var placar1 = 0
+var placar2 = 0
+
+func _ready():
+	randomize() 						# randomiza numeros
+	speed = int(rand_range(300, 500))	# randomiza de 300 a 400
+	print(speed)
+	
+
+	
+	pass
+
+func _process(delta): # função para ficar atualizando a cada frame
+	ball(delta)
+	player_1()
+	player2()
+
+	pass
+	
+func ball(delta): #tudo sobre a posição da bola
+	get_node(\"ball/ball_colision\").position.x += speed * dir_x * delta # aqui pega a posição da bola e coloca a velocidade
+	get_node(\"ball/ball_colision\").position.y += speed * dir_y * delta
+	
+	if $ball/ball_colision.position.x > 680: # se a posição da bola passar de 680 ela reseta a posição
+		$ball/ball_colision.position.x = 0
+		
+		dir_x *= -1
+		speed = int(rand_range(300, 400)) # se resetar a posição ela troca base da velocidade speed
+		placar1 += 1
+		$Control/player1placar.text = str(placar1)
+		
+	elif $ball/ball_colision.position.x < -680:
+		$ball/ball_colision.position.x = 0 
+		dir_x *= -1
+		speed = int(rand_range(300, 400))
+		placar2 += 1
+		$Control/player2placar.text = str(placar2)
+		
+
+func _on_barrier_colision_area_entered(area): # quando a bola entrar na area, ela vai inverter a direção y da bola
+	if area.name == \"ball_colision\":
+		dir_y *= -1
+		print(\"11\")
+
+	pass
+	
+#comandos player
+func player_1(): # player 1 funçao
+	if Input.is_action_pressed(\"ui_down\"): # se apertar a tecla down a posição y aumenta 4
+		$player1/player_colision.position.y += 4
+	elif Input.is_action_pressed(\"ui_up\"):
+		$player1/player_colision.position.y -=4
+		
+	if $player1/player_colision.position.y > 230: # se o player tentar passar da barreira ele reseta a posição
+		$player1/player_colision.position.y = 230
+	elif $player1/player_colision.position.y < -230:
+		$player1/player_colision.position.y = -230
+	
+
+
+
+func _on_player_colision_area_entered(area): # quando a bola colidir com o player muda a direção x da bola
+	if area.name == \"ball_colision\": # se o nome da area for ball colision ele inverte a posição
+		dir_x *= -1
+		speed += 50
+
+
+
+
+func player2():
+	$player2/player_colision.position.y = $ball/ball_colision.position.y
+	
+
+
+
+
+
+
+
+"
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 673, 35 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 19, 72.5 )
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 15.0
+
+[sub_resource type="DynamicFont" id=5]
+size = 50
+use_filter = true
+font_data = ExtResource( 6 )
+
+[node name="main" type="Node"]
+script = SubResource( 4 )
+
+[node name="bg" type="Node2D" parent="."]
+
+[node name="background" type="Sprite" parent="bg"]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="barrier1" type="Node2D" parent="."]
+
+[node name="barrier_colision" type="Area2D" parent="barrier1"]
+
+[node name="Sprite" type="Sprite" parent="barrier1/barrier_colision"]
+texture = ExtResource( 2 )
+centered = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="barrier1/barrier_colision"]
+position = Vector2( 631, 25 )
+shape = SubResource( 1 )
+
+[node name="barrier2" type="Node2D" parent="."]
+position = Vector2( 0, 661 )
+
+[node name="barrier_colision" type="Area2D" parent="barrier2"]
+
+[node name="Sprite" type="Sprite" parent="barrier2/barrier_colision"]
+texture = ExtResource( 2 )
+centered = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="barrier2/barrier_colision"]
+position = Vector2( 631, 25 )
+shape = SubResource( 1 )
+
+[node name="player1" type="Node2D" parent="."]
+position = Vector2( 54, 367 )
+
+[node name="player_colision" type="Area2D" parent="player1"]
+
+[node name="Sprite" type="Sprite" parent="player1/player_colision"]
+texture = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player1/player_colision"]
+position = Vector2( -3, -1.5 )
+shape = SubResource( 2 )
+
+[node name="player2" type="Node2D" parent="."]
+position = Vector2( 1224, 367 )
+
+[node name="player_colision" type="Area2D" parent="player2"]
+
+[node name="Sprite" type="Sprite" parent="player2/player_colision"]
+texture = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="player2/player_colision"]
+position = Vector2( -3, -1.5 )
+shape = SubResource( 2 )
+
+[node name="ball" type="Node2D" parent="."]
+position = Vector2( 640, 360 )
+
+[node name="ball_colision" type="Area2D" parent="ball"]
+
+[node name="Sprite" type="Sprite" parent="ball/ball_colision"]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ball/ball_colision"]
+position = Vector2( -1, -1 )
+shape = SubResource( 3 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="player1placar" type="Label" parent="Control"]
+margin_left = 430.0
+margin_top = 61.0
+margin_right = 667.0
+margin_bottom = 118.0
+custom_fonts/font = SubResource( 5 )
+text = "0"
+align = 1
+valign = 1
+
+[node name="player2placar" type="Label" parent="Control"]
+margin_left = 609.0
+margin_top = 61.0
+margin_right = 846.0
+margin_bottom = 118.0
+custom_fonts/font = SubResource( 5 )
+text = "0"
+align = 1
+valign = 1
+
+[connection signal="area_entered" from="barrier1/barrier_colision" to="." method="_on_barrier_colision_area_entered"]
+[connection signal="area_entered" from="barrier2/barrier_colision" to="." method="_on_barrier_colision_area_entered"]
+[connection signal="area_entered" from="player1/player_colision" to="." method="_on_player_colision_area_entered"]
+[connection signal="area_entered" from="player2/player_colision" to="." method="_on_player_colision_area_entered"]

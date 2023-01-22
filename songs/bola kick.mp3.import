@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/bola kick.mp3-b666b194c0b2bcb32b03b940eadfab61.mp3str"
+
+[deps]
+
+source_file="res://songs/bola kick.mp3"
+dest_files=[ "res://.import/bola kick.mp3-b666b194c0b2bcb32b03b940eadfab61.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
